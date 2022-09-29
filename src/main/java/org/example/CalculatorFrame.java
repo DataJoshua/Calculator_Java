@@ -10,6 +10,7 @@ public class CalculatorFrame extends JFrame {
     }
     public void createWindow(){
         this.setVisible(true);
+        this.setTitle("My calculator: Джошуа Родригес");
         this.setLayout(new GridLayout(0, 1, 10,10));
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

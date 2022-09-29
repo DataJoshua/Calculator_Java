@@ -3,6 +3,7 @@ package org.example;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Buttons extends JPanel {
 
@@ -19,39 +20,136 @@ public class Buttons extends JPanel {
 
     public void createButtons(int amount){
 
-         // we create a group of actions for each Button
+        //button to clear the screen
+        JButton clear = new JButton("CE");
+        clear.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                screen.setText("");
+            }
+        });
+
+        this.add(clear);
+
+        // button to delete arguments
+
+        JButton del = new JButton("DEL");
+        del.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String screenText = screen.getText();
+                int len = screenText.length();
+                try{
+                    String subScreen = screenText.substring(0, len - 1);
+                    screen.setText(subScreen);
+                }catch(StringIndexOutOfBoundsException exception){
+                    System.out.println("The screen is empty");
+                }
+
+            }
+        });
+
+        this.add(del);
+
+        // PI
+
+        JButton pi = new JButton("PI");
+        pi.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                screen.setText(3.141516+"");
+            }
+        });
+
+        this.add(pi);
+
+         // crete each button number and add in the frame
         for(int i =1; i <= amount; i++){
             JButton b = new JButton(new Actions(i+"", this.screen));
             this.add(b);
         }
+
+        // buttons for operation created with their own action class
+
+        JButton sum = new JButton(new ActionsOperators("+", this.screen));
+        JButton cero = new JButton(new Actions("0", this.screen));
+        JButton multiply = new JButton(new ActionsOperators("*", this.screen));
+        JButton divide = new JButton(new ActionsOperators("/", this.screen));
+        JButton rest = new JButton(new ActionsOperators("-", this.screen));
+        JButton equal = new JButton(new ActionsOperators("=", this.screen));
+        this.add(sum);
+        this.add(cero);
+        this.add(multiply);
+        this.add(divide);
+        this.add(rest);
+        this.add(equal);
+
     }
 }
 
-class Actions extends  AbstractAction{
+class Actions extends  AbstractAction {
     JTextField field;
-    public Actions(String name, JTextField field){
+
+
+    public Actions(String name, JTextField field) {
         putValue(Action.NAME, name);
         this.field = field;
     }
+
     @Override
     public void actionPerformed(ActionEvent e) {
-        String valueToCompare = (String) getValue(Action.NAME);
-        String message = "ese boton no existe";
+        String a = this.field.getText();
+        this.field.setText(a += this.getValue(Action.NAME));
+    }
+}
 
-        if(valueToCompare.equals("1")){
-            String a = field.getText();
-            field.setText(a += "1");
-        } else if(valueToCompare.equals("2")){
+class ActionsOperators extends AbstractAction{
+    JTextField field;
+    static double previous;
+    static double actual;
+    static String actualOperation;
+    public ActionsOperators(String name,JTextField field){
+        putValue(Action.NAME, name);
+        this.field = field;
 
-        }else if(valueToCompare.equals("3")){
-            message = "3";
-        }else if(valueToCompare.equals("4")){
-            message = "4";
-        }else if(valueToCompare.equals("5")){
-            message = "5";
-        }else if(valueToCompare.equals("6")){
-            message = "6";
+    }
+    @Override
+    public void actionPerformed(ActionEvent e) {
+
+        String operation = (String)this.getValue(Action.NAME);
+        System.out.println(operation);
+        if(operation.equals("+")){
+            previous = Double.parseDouble(field.getText());
+            field.setText("");
+            actualOperation = "sum";
+        } else if(operation.equals("-")){
+            previous = Double.parseDouble(field.getText());
+            field.setText("");
+            actualOperation = "res";
+        } else if(operation.equals("/")){
+            previous = Double.parseDouble(field.getText());
+            field.setText("");
+            actualOperation = "div";
+        } else if(operation.equals("*")){
+            previous = Double.parseDouble(field.getText());
+            field.setText("");
+            actualOperation = "mul";
+
+        } else if(operation.equals("=")){
+                actual =  Double.parseDouble(field.getText());
+                double result = 0;
+                switch (actualOperation){
+                    case "sum": result = actual + previous;
+                    break;
+                    case "res" : result = previous - actual;
+                    break;
+                    case "mul": result = actual * previous;
+                    break;
+                    case "div": result = previous / actual;
+                    break;
+                }
+                field.setText(result+"");
         }
-        System.out.println(message);
+
     }
 }
